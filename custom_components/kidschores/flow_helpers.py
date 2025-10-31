@@ -21,6 +21,9 @@ from .const import (
     CONF_ENABLE_MOBILE_NOTIFICATIONS,
     CONF_ENABLE_PERSISTENT_NOTIFICATIONS,
     CONF_MOBILE_NOTIFY_SERVICE,
+    CONF_NOTIFICATION_GROUP,
+    CONF_NOTIFICATION_PATH,
+    CONF_NOTIFICATION_TAG,
     CONF_NOTIFY_ON_APPROVAL,
     CONF_NOTIFY_ON_CLAIM,
     CONF_NOTIFY_ON_DISAPPROVAL,
@@ -67,6 +70,9 @@ def build_kid_schema(
     default_enable_mobile_notifications=False,
     default_mobile_notify_service=None,
     default_enable_persistent_notifications=False,
+    default_notification_group=None,
+    default_notification_tag=None,
+    default_notification_path=None,
 ):
     """Build a Voluptuous schema for adding/editing a Kid, keyed by internal_id in the dict."""
     user_options = [{"value": "", "label": "None"}] + [
@@ -99,6 +105,21 @@ def build_kid_schema(
                     multiple=False,
                 )
             ),
+            vol.Optional(
+                CONF_NOTIFICATION_GROUP, default=default_notification_group or ""
+            ): selector.TextSelector(
+                selector.TextSelectorConfig(multiline=False)
+            ),
+            vol.Optional(
+                CONF_NOTIFICATION_TAG, default=default_notification_tag or ""
+            ): selector.TextSelector(
+                selector.TextSelectorConfig(multiline=False)
+            ),
+            vol.Optional(
+                CONF_NOTIFICATION_PATH, default=default_notification_path or ""
+            ): selector.TextSelector(
+                selector.TextSelectorConfig(multiline=False)
+            ),
             vol.Required(
                 CONF_ENABLE_PERSISTENT_NOTIFICATIONS,
                 default=default_enable_persistent_notifications,
@@ -118,6 +139,9 @@ def build_parent_schema(
     default_enable_mobile_notifications=False,
     default_mobile_notify_service=None,
     default_enable_persistent_notifications=False,
+    default_notification_group=None,
+    default_notification_tag=None,
+    default_notification_path=None,
     internal_id=None,
 ):
     """Build a Voluptuous schema for adding/editing a Parent, keyed by internal_id in the dict."""
@@ -163,6 +187,21 @@ def build_parent_schema(
                     multiple=False,
                 )
             ),
+            vol.Optional(
+                CONF_NOTIFICATION_GROUP, default=default_notification_group or ""
+            ): selector.TextSelector(
+                selector.TextSelectorConfig(multiline=False)
+            ),
+            vol.Optional(
+                CONF_NOTIFICATION_TAG, default=default_notification_tag or ""
+            ): selector.TextSelector(
+                selector.TextSelectorConfig(multiline=False)
+            ),
+            vol.Optional(
+                CONF_NOTIFICATION_PATH, default=default_notification_path or ""
+            ): selector.TextSelector(
+                selector.TextSelectorConfig(multiline=False)
+            ),
             vol.Required(
                 CONF_ENABLE_PERSISTENT_NOTIFICATIONS,
                 default=default_enable_persistent_notifications,
@@ -172,7 +211,7 @@ def build_parent_schema(
     )
 
 
-def build_chore_schema(kids_dict, default=None):
+def build_chore_schema(kids_dict, default=None, allow_clear_due_date=False):
     """Build a schema for chores, referencing existing kids by name.
 
     Uses internal_id for entity management.
@@ -183,115 +222,122 @@ def build_chore_schema(kids_dict, default=None):
 
     kid_choices = {k: k for k in kids_dict}
 
-    return vol.Schema(
-        {
-            vol.Required("chore_name", default=chore_name_default): str,
-            vol.Optional(
-                "chore_description", default=default.get("description", "")
-            ): str,
-            vol.Optional(
-                "chore_labels", default=default.get("chore_labels", [])
-            ): selector.LabelSelector(selector.LabelSelectorConfig(multiple=True)),
-            vol.Required(
-                "default_points", default=default.get("default_points", 5)
-            ): selector.NumberSelector(
+    schema_dict = {
+        vol.Required("chore_name", default=chore_name_default): str,
+        vol.Optional(
+            "chore_description", default=default.get("description", "")
+        ): str,
+        vol.Optional(
+            "chore_labels", default=default.get("chore_labels", [])
+        ): selector.LabelSelector(selector.LabelSelectorConfig(multiple=True)),
+        vol.Required(
+            "default_points", default=default.get("default_points", 5)
+        ): selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                mode=selector.NumberSelectorMode.BOX,
+                min=0,
+                step=0.1,
+            )
+        ),
+        vol.Required(
+            "assigned_kids", default=default.get("assigned_kids", [])
+        ): cv.multi_select(kid_choices),
+        vol.Required(
+            "shared_chore", default=default.get("shared_chore", False)
+        ): selector.BooleanSelector(),
+        vol.Required(
+            "allow_multiple_claims_per_day",
+            default=default.get("allow_multiple_claims_per_day", False),
+        ): selector.BooleanSelector(),
+        vol.Required(
+            "partial_allowed", default=default.get("partial_allowed", False)
+        ): selector.BooleanSelector(),
+        vol.Optional(
+            "icon", default=default.get("icon", "")
+        ): selector.IconSelector(),
+        vol.Required(
+            "recurring_frequency",
+            default=default.get("recurring_frequency", FREQUENCY_NONE),
+        ): selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=[
+                    FREQUENCY_NONE,
+                    FREQUENCY_DAILY,
+                    FREQUENCY_WEEKLY,
+                    FREQUENCY_BIWEEKLY,
+                    FREQUENCY_MONTHLY,
+                    FREQUENCY_CUSTOM,
+                ],
+                translation_key="recurring_frequency",
+            )
+        ),
+        vol.Optional(
+            "custom_interval", default=default.get("custom_interval", None)
+        ): vol.Any(
+            None,
+            selector.NumberSelector(
                 selector.NumberSelectorConfig(
-                    mode=selector.NumberSelectorMode.BOX,
-                    min=0,
-                    step=0.1,
+                    mode=selector.NumberSelectorMode.BOX, min=1, step=1
                 )
             ),
-            vol.Required(
-                "assigned_kids", default=default.get("assigned_kids", [])
-            ): cv.multi_select(kid_choices),
-            vol.Required(
-                "shared_chore", default=default.get("shared_chore", False)
-            ): selector.BooleanSelector(),
-            vol.Required(
-                "allow_multiple_claims_per_day",
-                default=default.get("allow_multiple_claims_per_day", False),
-            ): selector.BooleanSelector(),
-            vol.Required(
-                "partial_allowed", default=default.get("partial_allowed", False)
-            ): selector.BooleanSelector(),
-            vol.Optional(
-                "icon", default=default.get("icon", "")
-            ): selector.IconSelector(),
-            vol.Required(
-                "recurring_frequency",
-                default=default.get("recurring_frequency", FREQUENCY_NONE),
-            ): selector.SelectSelector(
+        ),
+        vol.Optional(
+            "custom_interval_unit",
+            default=default.get("custom_interval_unit", None),
+        ): vol.Any(
+            None,
+            selector.SelectSelector(
                 selector.SelectSelectorConfig(
-                    options=[
-                        FREQUENCY_NONE,
-                        FREQUENCY_DAILY,
-                        FREQUENCY_WEEKLY,
-                        FREQUENCY_BIWEEKLY,
-                        FREQUENCY_MONTHLY,
-                        FREQUENCY_CUSTOM,
-                    ],
-                    translation_key="recurring_frequency",
+                    options=["", "days", "weeks", "months"],
+                    translation_key="custom_interval_unit",
+                    multiple=False,
+                    mode=selector.SelectSelectorMode.DROPDOWN,
                 )
             ),
-            vol.Optional(
-                "custom_interval", default=default.get("custom_interval", None)
-            ): vol.Any(
-                None,
-                selector.NumberSelector(
-                    selector.NumberSelectorConfig(
-                        mode=selector.NumberSelectorMode.BOX, min=1, step=1
-                    )
-                ),
+        ),
+        vol.Optional(
+            CONF_APPLICABLE_DAYS,
+            default=default.get(CONF_APPLICABLE_DAYS, DEFAULT_APPLICABLE_DAYS),
+        ): selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=[
+                    {"value": key, "label": WEEKDAY_OPTIONS[key]}
+                    for key in WEEKDAY_OPTIONS
+                ],
+                multiple=True,
+                translation_key="applicable_days",
+            )
+        ),
+        vol.Optional("due_date", default=default.get("due_date")): vol.Any(
+            None, selector.DateTimeSelector()
+        ),
+        vol.Optional(
+            CONF_NOTIFY_ON_CLAIM,
+            default=default.get(CONF_NOTIFY_ON_CLAIM, DEFAULT_NOTIFY_ON_CLAIM),
+        ): selector.BooleanSelector(),
+        vol.Optional(
+            CONF_NOTIFY_ON_APPROVAL,
+            default=default.get(
+                CONF_NOTIFY_ON_APPROVAL, DEFAULT_NOTIFY_ON_APPROVAL
             ),
-            vol.Optional(
-                "custom_interval_unit",
-                default=default.get("custom_interval_unit", None),
-            ): vol.Any(
-                None,
-                selector.SelectSelector(
-                    selector.SelectSelectorConfig(
-                        options=["", "days", "weeks", "months"],
-                        translation_key="custom_interval_unit",
-                        multiple=False,
-                        mode=selector.SelectSelectorMode.DROPDOWN,
-                    )
-                ),
+        ): selector.BooleanSelector(),
+        vol.Optional(
+            CONF_NOTIFY_ON_DISAPPROVAL,
+            default=default.get(
+                CONF_NOTIFY_ON_DISAPPROVAL, DEFAULT_NOTIFY_ON_DISAPPROVAL
             ),
+        ): selector.BooleanSelector(),
+        vol.Required("internal_id", default=internal_id_default): str,
+    }
+
+    if allow_clear_due_date:
+        schema_dict[
             vol.Optional(
-                CONF_APPLICABLE_DAYS,
-                default=default.get(CONF_APPLICABLE_DAYS, DEFAULT_APPLICABLE_DAYS),
-            ): selector.SelectSelector(
-                selector.SelectSelectorConfig(
-                    options=[
-                        {"value": key, "label": WEEKDAY_OPTIONS[key]}
-                        for key in WEEKDAY_OPTIONS
-                    ],
-                    multiple=True,
-                    translation_key="applicable_days",
-                )
-            ),
-            vol.Optional("due_date", default=default.get("due_date")): vol.Any(
-                None, selector.DateTimeSelector()
-            ),
-            vol.Optional(
-                CONF_NOTIFY_ON_CLAIM,
-                default=default.get(CONF_NOTIFY_ON_CLAIM, DEFAULT_NOTIFY_ON_CLAIM),
-            ): selector.BooleanSelector(),
-            vol.Optional(
-                CONF_NOTIFY_ON_APPROVAL,
-                default=default.get(
-                    CONF_NOTIFY_ON_APPROVAL, DEFAULT_NOTIFY_ON_APPROVAL
-                ),
-            ): selector.BooleanSelector(),
-            vol.Optional(
-                CONF_NOTIFY_ON_DISAPPROVAL,
-                default=default.get(
-                    CONF_NOTIFY_ON_DISAPPROVAL, DEFAULT_NOTIFY_ON_DISAPPROVAL
-                ),
-            ): selector.BooleanSelector(),
-            vol.Required("internal_id", default=internal_id_default): str,
-        }
-    )
+                "clear_due_date", default=default.get("clear_due_date", False)
+            )
+        ] = selector.BooleanSelector()
+
+    return vol.Schema(schema_dict)
 
 
 def build_badge_schema(default=None):

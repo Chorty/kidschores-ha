@@ -30,6 +30,9 @@
           "ha_user": "Usuario de Home Assistant",
           "enable_mobile_notifications": "Habilitar Notificaciones Móviles",
           "mobile_notify_service": "Servicio de Notificaciones",
+          "notification_group": "Grupo de Notificaciones",
+          "notification_tag": "Etiqueta de Notificación",
+          "notification_path": "Ruta de Navegación / URL",
           "enable_persistent_notifications": "Habilitar Notificaciones Persistentes"
         }
       },
@@ -49,6 +52,9 @@
           "associated_kids": "Niños Asociados",
           "enable_mobile_notifications": "Habilitar Notificaciones Móviles",
           "mobile_notify_service": "Servicio de Notificaciones",
+          "notification_group": "Grupo de Notificaciones",
+          "notification_tag": "Etiqueta de Notificación",
+          "notification_path": "Ruta de Navegación / URL",
           "enable_persistent_notifications": "Habilitar Notificaciones Persistentes",
           "internal_id": "ID Interno"
         }
@@ -79,6 +85,7 @@
           "custom_interval_unit": "Periodo de Frecuencia Recurrente Personalizada",
           "applicable_days": "Días aplicables",
           "due_date": "Fecha de vencimiento",
+          "clear_due_date": "Eliminar fecha de vencimiento",
           "notify_on_claim": "Notificar al reclamar",
           "notify_on_approval": "Notificar al aprobar",
           "notify_on_disapproval": "Notificar al rechazar"
@@ -302,6 +309,9 @@
           "ha_user": "Usuario de Home Assistant",
           "enable_mobile_notifications": "Habilitar Notificaciones Móviles",
           "mobile_notify_service": "Servicio de Notificaciones",
+          "notification_group": "Grupo de Notificaciones",
+          "notification_tag": "Etiqueta de Notificación",
+          "notification_path": "Ruta de Navegación / URL",
           "enable_persistent_notifications": "Habilitar Notificaciones Persistentes",
           "internal_id": "ID Interno"
         }
@@ -315,6 +325,9 @@
           "associated_kids": "Niños Asociados",
           "enable_mobile_notifications": "Habilitar Notificaciones Móviles",
           "mobile_notify_service": "Servicio de Notificaciones",
+          "notification_group": "Grupo de Notificaciones",
+          "notification_tag": "Etiqueta de Notificación",
+          "notification_path": "Ruta de Navegación / URL",
           "enable_persistent_notifications": "Habilitar Notificaciones Persistentes",
           "internal_id": "ID Interno"
         }
@@ -338,6 +351,7 @@
           "custom_interval_unit": "Periodo de Frecuencia Recurrente Personalizada",
           "applicable_days": "Días aplicables",
           "due_date": "Fecha de vencimiento",
+          "clear_due_date": "Eliminar fecha de vencimiento",
           "notify_on_claim": "Notificar al reclamar",
           "notify_on_approval": "Notificar al aprobar",
           "notify_on_disapproval": "Notificar al rechazar"
@@ -437,6 +451,9 @@
           "ha_user": "Usuario de Home Assistant",
           "enable_mobile_notifications": "Habilitar Notificaciones Móviles",
           "mobile_notify_service": "Servicio de Notificaciones",
+          "notification_group": "Grupo de Notificaciones",
+          "notification_tag": "Etiqueta de Notificación",
+          "notification_path": "Ruta de Navegación / URL",
           "enable_persistent_notifications": "Habilitar Notificaciones Persistentes",
           "internal_id": "ID Interno"
         }
@@ -450,6 +467,9 @@
           "associated_kids": "Niños Asociados",
           "enable_mobile_notifications": "Habilitar Notificaciones Móviles",
           "mobile_notify_service": "Servicio de Notificaciones",
+          "notification_group": "Grupo de Notificaciones",
+          "notification_tag": "Etiqueta de Notificación",
+          "notification_path": "Ruta de Navegación / URL",
           "enable_persistent_notifications": "Habilitar Notificaciones Persistentes",
           "internal_id": "ID Interno"
         }
@@ -473,6 +493,7 @@
           "custom_interval_unit": "Periodo de Frecuencia Recurrente Personalizada",
           "applicable_days": "Días aplicables",
           "due_date": "Fecha de vencimiento",
+          "clear_due_date": "Eliminar fecha de vencimiento",
           "notify_on_claim": "Notificar al reclamar",
           "notify_on_approval": "Notificar al aprobar",
           "notify_on_disapproval": "Notificar al rechazar"

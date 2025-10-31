@@ -24,6 +24,9 @@ from .const import (
     CONF_NOTIFY_ON_APPROVAL,
     CONF_NOTIFY_ON_CLAIM,
     CONF_NOTIFY_ON_DISAPPROVAL,
+    CONF_NOTIFICATION_GROUP,
+    CONF_NOTIFICATION_PATH,
+    CONF_NOTIFICATION_TAG,
     CONF_PARENTS,
     CONF_PENALTIES,
     CONF_POINTS_ICON,
@@ -284,6 +287,9 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
             )
             notify_service = user_input.get("mobile_notify_service") or ""
             enable_persist = user_input.get("enable_persistent_notifications", True)
+            notification_group = user_input.get(CONF_NOTIFICATION_GROUP) or ""
+            notification_tag = user_input.get(CONF_NOTIFICATION_TAG) or ""
+            notification_path = user_input.get(CONF_NOTIFICATION_PATH) or ""
 
             if any(kid_data["name"] == kid_name for kid_data in kids_dict.values()):
                 errors["kid_name"] = "duplicate_kid"
@@ -295,6 +301,9 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
                     "enable_notifications": enable_mobile_notifications,
                     "mobile_notify_service": notify_service,
                     "use_persistent_notifications": enable_persist,
+                    CONF_NOTIFICATION_GROUP: notification_group,
+                    CONF_NOTIFICATION_TAG: notification_tag,
+                    CONF_NOTIFICATION_PATH: notification_path,
                     "internal_id": internal_id,
                 }
                 self._entry_options[CONF_KIDS] = kids_dict
@@ -335,6 +344,10 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
             notify_service = user_input.get("mobile_notify_service") or ""
             enable_persist = user_input.get("enable_persistent_notifications", True)
 
+            notification_group = user_input.get(CONF_NOTIFICATION_GROUP) or ""
+            notification_tag = user_input.get(CONF_NOTIFICATION_TAG) or ""
+            notification_path = user_input.get(CONF_NOTIFICATION_PATH) or ""
+
             if any(
                 parent_data["name"] == parent_name
                 for parent_data in parents_dict.values()
@@ -349,6 +362,9 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
                     "enable_notifications": enable_mobile_notifications,
                     "mobile_notify_service": notify_service,
                     "use_persistent_notifications": enable_persist,
+                    CONF_NOTIFICATION_GROUP: notification_group,
+                    CONF_NOTIFICATION_TAG: notification_tag,
+                    CONF_NOTIFICATION_PATH: notification_path,
                     "internal_id": internal_id,
                 }
                 self._entry_options[CONF_PARENTS] = parents_dict
@@ -796,6 +812,9 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
             enable_notifications = user_input.get("enable_mobile_notifications", True)
             mobile_notify_service = user_input.get("mobile_notify_service") or ""
             use_persistent = user_input.get("enable_persistent_notifications", True)
+            notification_group = user_input.get(CONF_NOTIFICATION_GROUP) or ""
+            notification_tag = user_input.get(CONF_NOTIFICATION_TAG) or ""
+            notification_path = user_input.get(CONF_NOTIFICATION_PATH) or ""
 
             # Check for duplicate names excluding current kid
             if any(
@@ -809,6 +828,9 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
                 kid_data["enable_notifications"] = enable_notifications
                 kid_data["mobile_notify_service"] = mobile_notify_service
                 kid_data["use_persistent_notifications"] = use_persistent
+                kid_data[CONF_NOTIFICATION_GROUP] = notification_group
+                kid_data[CONF_NOTIFICATION_TAG] = notification_tag
+                kid_data[CONF_NOTIFICATION_PATH] = notification_path
 
                 self._entry_options[CONF_KIDS] = kids_dict
 
@@ -830,6 +852,9 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
             default_enable_persistent_notifications=kid_data.get(
                 "use_persistent_notifications", True
             ),
+            default_notification_group=kid_data.get(CONF_NOTIFICATION_GROUP),
+            default_notification_tag=kid_data.get(CONF_NOTIFICATION_TAG),
+            default_notification_path=kid_data.get(CONF_NOTIFICATION_PATH),
             internal_id=internal_id,
         )
         return self.async_show_form(
@@ -857,6 +882,9 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
             enable_notifications = user_input.get("enable_mobile_notifications", True)
             mobile_notify_service = user_input.get("mobile_notify_service") or ""
             use_persistent = user_input.get("enable_persistent_notifications", True)
+            notification_group = user_input.get(CONF_NOTIFICATION_GROUP) or ""
+            notification_tag = user_input.get(CONF_NOTIFICATION_TAG) or ""
+            notification_path = user_input.get(CONF_NOTIFICATION_PATH) or ""
 
             # Check for duplicate names excluding current parent
             if any(
@@ -871,6 +899,9 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
                 parent_data["enable_notifications"] = enable_notifications
                 parent_data["mobile_notify_service"] = mobile_notify_service
                 parent_data["use_persistent_notifications"] = use_persistent
+                parent_data[CONF_NOTIFICATION_GROUP] = notification_group
+                parent_data[CONF_NOTIFICATION_TAG] = notification_tag
+                parent_data[CONF_NOTIFICATION_PATH] = notification_path
 
                 self._entry_options[CONF_PARENTS] = parents_dict
 
@@ -899,6 +930,9 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
             default_enable_persistent_notifications=parent_data.get(
                 "use_persistent_notifications", True
             ),
+            default_notification_group=parent_data.get(CONF_NOTIFICATION_GROUP),
+            default_notification_tag=parent_data.get(CONF_NOTIFICATION_TAG),
+            default_notification_path=parent_data.get(CONF_NOTIFICATION_PATH),
             internal_id=internal_id,
         )
         return self.async_show_form(
@@ -922,6 +956,7 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             new_name = user_input["chore_name"].strip()
             raw_due = user_input.get("due_date")
+            clear_due_date = user_input.get("clear_due_date", False)
 
             # Check for duplicate names excluding current chore
             if any(
@@ -952,7 +987,10 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
                 chore_data["custom_interval_unit"] = user_input.get(
                     "custom_interval_unit"
                 )
-                if raw_due:
+                if clear_due_date:
+                    chore_data["due_date"] = None
+                    LOGGER.debug("Clear due date requested; setting to None")
+                elif raw_due:
                     try:
                         if isinstance(raw_due, datetime.datetime):
                             parsed_due = raw_due
@@ -989,7 +1027,12 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
                 return self.async_show_form(
                     step_id="edit_chore",
                     data_schema=build_chore_schema(
-                        kids_dict, default={**chore_data, **default_data}
+                        kids_dict,
+                        default={**chore_data, **default_data},
+                        allow_clear_due_date=bool(
+                            chore_data.get("due_date")
+                        )
+                        or user_input.get("clear_due_date", False),
                     ),
                     errors=errors,
                 )
@@ -1029,8 +1072,11 @@ class KidsChoresOptionsFlowHandler(config_entries.OptionsFlow):
                     "Failed to parse existing_due_date '%s': %s", existing_due_str, e
                 )
 
+        allow_clear = bool(chore_data.get("due_date"))
         schema = build_chore_schema(
-            kids_dict, default={**chore_data, "due_date": existing_due_date}
+            kids_dict,
+            default={**chore_data, "due_date": existing_due_date},
+            allow_clear_due_date=allow_clear,
         )
         return self.async_show_form(
             step_id="edit_chore", data_schema=schema, errors=errors

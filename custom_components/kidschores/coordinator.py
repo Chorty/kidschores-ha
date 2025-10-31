@@ -56,6 +56,9 @@ from .const import (
     CONF_ENABLE_PERSISTENT_NOTIFICATIONS,
     CONF_KIDS,
     CONF_MOBILE_NOTIFY_SERVICE,
+    CONF_NOTIFICATION_GROUP,
+    CONF_NOTIFICATION_PATH,
+    CONF_NOTIFICATION_TAG,
     CONF_NOTIFY_ON_APPROVAL,
     CONF_NOTIFY_ON_CLAIM,
     CONF_NOTIFY_ON_DISAPPROVAL,
@@ -94,6 +97,8 @@ from .const import (
     DEFAULT_BONUS_POINTS,
     DEFAULT_WEEKLY_RESET_DAY,
     DOMAIN,
+    EVENT_CHORE_APPROVED,
+    EVENT_CHORE_COMPLETED,
     FREQUENCY_BIWEEKLY,
     FREQUENCY_CUSTOM,
     FREQUENCY_DAILY,
@@ -1478,6 +1483,22 @@ class KidsChoresDataCoordinator(DataUpdateCoordinator):
 
         self._process_chore_state(kid_id, chore_id, CHORE_STATE_CLAIMED)
 
+        self.hass.bus.async_fire(
+            EVENT_CHORE_COMPLETED,
+            {
+                "kid_id": kid_id,
+                "kid_name": self.kids_data[kid_id]["name"],
+                "chore_id": chore_id,
+                "chore_name": chore_info.get("name"),
+                "reported_by": user_name,
+                "default_points": chore_info.get("default_points", DEFAULT_POINTS),
+                "allow_multiple_claims_per_day": chore_info.get(
+                    "allow_multiple_claims_per_day", False
+                ),
+                "shared_chore": chore_info.get("shared_chore", False),
+            },
+        )
+
         # Send a notification to the parents that a kid claimed a chore
         if chore_info.get(CONF_NOTIFY_ON_CLAIM, DEFAULT_NOTIFY_ON_CLAIM):
             actions = [
@@ -1551,6 +1572,26 @@ class KidsChoresDataCoordinator(DataUpdateCoordinator):
 
         self._process_chore_state(
             kid_id, chore_id, CHORE_STATE_APPROVED, points_awarded=awarded_points
+        )
+
+        self.hass.bus.async_fire(
+            EVENT_CHORE_APPROVED,
+            {
+                "kid_id": kid_id,
+                "kid_name": self.kids_data[kid_id]["name"],
+                "chore_id": chore_id,
+                "chore_name": chore_info.get("name"),
+                "parent_name": parent_name,
+                "awarded_points": awarded_points,
+                "requested_points": points_awarded
+                if points_awarded is not None
+                else chore_info.get("default_points", DEFAULT_POINTS),
+                "points_multiplier": multiplier,
+                "shared_chore": chore_info.get("shared_chore", False),
+                "allow_multiple_claims_per_day": chore_info.get(
+                    "allow_multiple_claims_per_day", False
+                ),
+            },
         )
 
         # Remove to avoid awarding duplicated points
@@ -3660,6 +3701,16 @@ class KidsChoresDataCoordinator(DataUpdateCoordinator):
         mobile_enabled = kid_info.get(CONF_ENABLE_MOBILE_NOTIFICATIONS, True)
         persistent_enabled = kid_info.get(CONF_ENABLE_PERSISTENT_NOTIFICATIONS, True)
         mobile_notify_service = kid_info.get(CONF_MOBILE_NOTIFY_SERVICE, "")
+        notification_data = dict(extra_data or {})
+        notification_group = kid_info.get(CONF_NOTIFICATION_GROUP) or ""
+        notification_tag = kid_info.get(CONF_NOTIFICATION_TAG) or ""
+        notification_path = kid_info.get(CONF_NOTIFICATION_PATH) or ""
+        if notification_group:
+            notification_data.setdefault("group", notification_group)
+        if notification_tag:
+            notification_data.setdefault("tag", notification_tag)
+        if notification_path:
+            notification_data.setdefault("url", notification_path)
         if mobile_enabled and mobile_notify_service:
             await async_send_notification(
                 self.hass,
@@ -3667,7 +3718,7 @@ class KidsChoresDataCoordinator(DataUpdateCoordinator):
                 title,
                 message,
                 actions=actions,
-                extra_data=extra_data,
+                extra_data=notification_data,
                 use_persistent=persistent_enabled,
             )
         elif persistent_enabled:
@@ -3704,6 +3755,16 @@ class KidsChoresDataCoordinator(DataUpdateCoordinator):
                 CONF_ENABLE_PERSISTENT_NOTIFICATIONS, True
             )
             mobile_notify_service = parent_info.get(CONF_MOBILE_NOTIFY_SERVICE, "")
+            notification_data = dict(extra_data or {})
+            notification_group = parent_info.get(CONF_NOTIFICATION_GROUP) or ""
+            notification_tag = parent_info.get(CONF_NOTIFICATION_TAG) or ""
+            notification_path = parent_info.get(CONF_NOTIFICATION_PATH) or ""
+            if notification_group:
+                notification_data.setdefault("group", notification_group)
+            if notification_tag:
+                notification_data.setdefault("tag", notification_tag)
+            if notification_path:
+                notification_data.setdefault("url", notification_path)
             if mobile_enabled and mobile_notify_service:
                 await async_send_notification(
                     self.hass,
@@ -3711,7 +3772,7 @@ class KidsChoresDataCoordinator(DataUpdateCoordinator):
                     title,
                     message,
                     actions=actions,
-                    extra_data=extra_data,
+                    extra_data=notification_data,
                     use_persistent=persistent_enabled,
                 )
             elif persistent_enabled:

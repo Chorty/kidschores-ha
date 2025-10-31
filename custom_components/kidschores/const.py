@@ -71,6 +71,9 @@ CONF_ENABLE_PERSISTENT_NOTIFICATIONS = "enable_persistent_notifications"
 CONF_NOTIFY_ON_CLAIM = "notify_on_claim"
 CONF_NOTIFY_ON_APPROVAL = "notify_on_approval"
 CONF_NOTIFY_ON_DISAPPROVAL = "notify_on_disapproval"
+CONF_NOTIFICATION_GROUP = "notification_group"
+CONF_NOTIFICATION_PATH = "notification_path"
+CONF_NOTIFICATION_TAG = "notification_tag"
 CONF_CHORE_NOTIFY_SERVICE = "chore_notify_service"
 
 NOTIFICATION_EVENT = "mobile_app_notification_action"
@@ -191,7 +194,10 @@ REWARD_STATE_UNKNOWN = "unknown"  # Unknown reward state
 
 # -------------------- Events --------------------
 # Event Names
-EVENT_CHORE_COMPLETED = "kidschores_chore_completed"  # Event for chore completion
+EVENT_CHORE_COMPLETED = (
+    "kidschores_chore_completed"
+)  # Event fired when a kid marks a chore as done/claimed
+EVENT_CHORE_APPROVED = "kidschores_chore_approved"  # Event fired when a chore is approved
 EVENT_REWARD_REDEEMED = "kidschores_reward_redeemed"  # Event for redeeming a reward
 
 # -------------------- Actions --------------------
