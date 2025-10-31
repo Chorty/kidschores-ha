@@ -30,6 +30,9 @@
           "ha_user": "Home Assistant User",
           "enable_mobile_notifications": "Enable Mobile Notifications",
           "mobile_notify_service": "Notify Service",
+          "notification_group": "Notification Group",
+          "notification_tag": "Notification Tag",
+          "notification_path": "Navigation Path / URL",
           "enable_persistent_notifications": "Enable Persistent Notifications"
         }
       },
@@ -49,6 +52,9 @@
           "associated_kids": "Associated Kids",
           "enable_mobile_notifications": "Enable Mobile Notifications",
           "mobile_notify_service": "Notify Service",
+          "notification_group": "Notification Group",
+          "notification_tag": "Notification Tag",
+          "notification_path": "Navigation Path / URL",
           "enable_persistent_notifications": "Enable Persistent Notifications",
           "internal_id": "Internal ID"
         }
@@ -79,6 +85,7 @@
           "custom_interval_unit": "Custom Recurring Frequency Period",
           "applicable_days": "Applicable Days",
           "due_date": "Due Date",
+          "clear_due_date": "Remove Due Date",
           "notify_on_claim": "Notify on Claim",
           "notify_on_approval": "Notify on Approval",
           "notify_on_disapproval": "Notify on Disapproval"
@@ -302,6 +309,9 @@
           "ha_user": "Home Assistant User",
           "enable_mobile_notifications": "Enable Mobile Notifications",
           "mobile_notify_service": "Notify Service",
+          "notification_group": "Notification Group",
+          "notification_tag": "Notification Tag",
+          "notification_path": "Navigation Path / URL",
           "enable_persistent_notifications": "Enable Persistent Notifications",
           "internal_id": "Internal ID"
         }
@@ -315,6 +325,9 @@
           "associated_kids": "Associated Kids",
           "enable_mobile_notifications": "Enable Mobile Notifications",
           "mobile_notify_service": "Notify Service",
+          "notification_group": "Notification Group",
+          "notification_tag": "Notification Tag",
+          "notification_path": "Navigation Path / URL",
           "enable_persistent_notifications": "Enable Persistent Notifications",
           "internal_id": "Internal ID"
         }
@@ -338,6 +351,7 @@
           "custom_interval_unit": "Custom Recurring Frequency Period",
           "applicable_days": "Applicable Days",
           "due_date": "Due Date",
+          "clear_due_date": "Remove Due Date",
           "notify_on_claim": "Notify on Claim",
           "notify_on_approval": "Notify on Approval",
           "notify_on_disapproval": "Notify on Disapproval"
@@ -437,6 +451,9 @@
           "ha_user": "Home Assistant User",
           "enable_mobile_notifications": "Enable Mobile Notifications",
           "mobile_notify_service": "Notify Service",
+          "notification_group": "Notification Group",
+          "notification_tag": "Notification Tag",
+          "notification_path": "Navigation Path / URL",
           "enable_persistent_notifications": "Enable Persistent Notifications",
           "internal_id": "Internal ID"
         }
@@ -450,6 +467,9 @@
           "associated_kids": "Associated Kids",
           "enable_mobile_notifications": "Enable Mobile Notifications",
           "mobile_notify_service": "Notify Service",
+          "notification_group": "Notification Group",
+          "notification_tag": "Notification Tag",
+          "notification_path": "Navigation Path / URL",
           "enable_persistent_notifications": "Enable Persistent Notifications",
           "internal_id": "Internal ID"
         }
@@ -473,6 +493,7 @@
           "custom_interval_unit": "Custom Recurring Frequency Period",
           "applicable_days": "Applicable Days",
           "due_date": "Due Date",
+          "clear_due_date": "Remove Due Date",
           "notify_on_claim": "Notify on Claim",
           "notify_on_approval": "Notify on Approval",
           "notify_on_disapproval": "Notify on Disapproval"

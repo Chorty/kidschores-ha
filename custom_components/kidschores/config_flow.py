@@ -26,6 +26,9 @@ from .const import (
     CONF_NOTIFY_ON_APPROVAL,
     CONF_NOTIFY_ON_CLAIM,
     CONF_NOTIFY_ON_DISAPPROVAL,
+    CONF_NOTIFICATION_GROUP,
+    CONF_NOTIFICATION_PATH,
+    CONF_NOTIFICATION_TAG,
     CONF_PARENTS,
     CONF_PENALTIES,
     CONF_POINTS_ICON,
@@ -170,6 +173,12 @@ class KidsChoresConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
             notify_service = user_input.get("mobile_notify_service") or ""
             enable_persist = user_input.get("enable_persistent_notifications", True)
+            notification_group = user_input.get(CONF_NOTIFICATION_GROUP) or ""
+            notification_tag = user_input.get(CONF_NOTIFICATION_TAG) or ""
+            notification_path = user_input.get(CONF_NOTIFICATION_PATH) or ""
+            notification_group = user_input.get(CONF_NOTIFICATION_GROUP) or ""
+            notification_tag = user_input.get(CONF_NOTIFICATION_TAG) or ""
+            notification_path = user_input.get(CONF_NOTIFICATION_PATH) or ""
 
             if not kid_name:
                 errors["kid_name"] = "invalid_kid_name"
@@ -185,6 +194,9 @@ class KidsChoresConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     "enable_notifications": enable_mobile_notifications,
                     "mobile_notify_service": notify_service,
                     "use_persistent_notifications": enable_persist,
+                    CONF_NOTIFICATION_GROUP: notification_group,
+                    CONF_NOTIFICATION_TAG: notification_tag,
+                    CONF_NOTIFICATION_PATH: notification_path,
                     "internal_id": internal_id,
                 }
                 LOGGER.debug("Added kid: %s with ID: %s", kid_name, internal_id)
@@ -264,6 +276,9 @@ class KidsChoresConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     "enable_notifications": enable_mobile_notifications,
                     "mobile_notify_service": notify_service,
                     "use_persistent_notifications": enable_persist,
+                    CONF_NOTIFICATION_GROUP: notification_group,
+                    CONF_NOTIFICATION_TAG: notification_tag,
+                    CONF_NOTIFICATION_PATH: notification_path,
                     "internal_id": internal_id,
                 }
                 LOGGER.debug("Added parent: %s with ID: %s", parent_name, internal_id)
