@@ -260,6 +260,10 @@ class KidsChoresConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             notify_service = user_input.get("mobile_notify_service") or ""
             enable_persist = user_input.get("enable_persistent_notifications", True)
 
+            notification_group = user_input.get(CONF_NOTIFICATION_GROUP) or ""
+            notification_tag = user_input.get(CONF_NOTIFICATION_TAG) or ""
+            notification_path = user_input.get(CONF_NOTIFICATION_PATH) or ""
+
             if not parent_name:
                 errors["parent_name"] = "invalid_parent_name"
             elif any(
