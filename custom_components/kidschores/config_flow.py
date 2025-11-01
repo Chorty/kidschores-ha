@@ -176,6 +176,9 @@ class KidsChoresConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             notification_group = user_input.get(CONF_NOTIFICATION_GROUP) or ""
             notification_tag = user_input.get(CONF_NOTIFICATION_TAG) or ""
             notification_path = user_input.get(CONF_NOTIFICATION_PATH) or ""
+            notification_group = user_input.get(CONF_NOTIFICATION_GROUP) or ""
+            notification_tag = user_input.get(CONF_NOTIFICATION_TAG) or ""
+            notification_path = user_input.get(CONF_NOTIFICATION_PATH) or ""
 
             if not kid_name:
                 errors["kid_name"] = "invalid_kid_name"
